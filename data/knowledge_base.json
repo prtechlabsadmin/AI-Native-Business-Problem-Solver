@@ -1,0 +1,98 @@
+[
+  {
+    "id": "KB-101",
+    "title": "Resolving Double Charges & Billing Inquiries",
+    "category": "Billing",
+    "keywords": ["double charge", "duplicate invoice", "credit card", "refund", "overcharge", "billing cycle", "receipt"],
+    "content": "Double charges typically occur when an authorization hold is placed in addition to the actual subscription charge, or when an account is upgraded mid-cycle without prorating. Resolution steps:\n1. Verify the customer's billing transaction history in Stripe / Chargebee.\n2. If a duplicate charge settled, issue an immediate refund (processed within 3-5 business days).\n3. If it is an authorization hold, advise the customer that the pending hold falls off within 48-72 hours.\n4. Attach the official receipt and updated invoice PDF.",
+    "resolution_template": "Hello {customer_name},\n\nThank you for contacting billing support. I have reviewed your account transactions and located the duplicate charge of ${amount} on {date}.\n\nI have issued a full refund of ${amount} back to your original payment method. Please allow 3-5 business days for your bank to post the funds. I have also attached your corrected invoice for your records.\n\nPlease let us know if you have any further questions!"
+  },
+  {
+    "id": "KB-102",
+    "title": "Subscription Cancellation & Refund Policy",
+    "category": "Billing",
+    "keywords": ["cancel subscription", "cancel plan", "refund policy", "downgrade", "stop billing", "auto-renewal"],
+    "content": "SaaS Subscription Policy: Customers may cancel at any time via Settings > Billing > Cancel Subscription. Monthly plans are non-refundable after 14 days of renewal unless service downtime occurred. Annual plans qualify for prorated refunds within 30 days of renewal. In cancellation requests, confirm cancellation date and retained access until the end of billing period.",
+    "resolution_template": "Hello {customer_name},\n\nI have confirmed the cancellation of your {tier} subscription. Your subscription will remain active until {billing_end_date}, after which your account will transition to our Free plan and you will not be charged again.\n\nPer our policy, {refund_status_message}.\n\nIf you ever wish to reactivate or need your data exported, we are always here to assist."
+  },
+  {
+    "id": "KB-103",
+    "title": "Failed Payment & Updating Payment Methods",
+    "category": "Billing",
+    "keywords": ["payment failed", "card declined", "update payment", "invoice past due", "stripe error", "expired card"],
+    "content": "Payment failures occur due to expired cards, bank fraud filters, or 3D Secure authentication requirements. Our system retries 3 times over 7 days before suspending access. Direct users to Settings > Billing > Payment Methods to securely update credit card or switch to ACH/wire (Enterprise).",
+    "resolution_template": "Hello {customer_name},\n\nWe noticed a recent payment attempt on your account failed. To restore uninterrupted access, you can update your payment details securely by visiting: Settings > Billing > Payment Methods.\n\nOnce updated, our system will automatically re-attempt the charge and clear any past-due notices. If your bank is blocking the transaction, please notify them to authorize charges from our billing descriptor."
+  },
+  {
+    "id": "KB-201",
+    "title": "500 Internal Server Error & API Downtime Troubleshooting",
+    "category": "Technical Support",
+    "keywords": ["500 error", "internal server error", "api down", "502 bad gateway", "server crash", "timeout", "service unavailable"],
+    "content": "500 Internal Server errors can be caused by uncaught backend exceptions, database connection pool exhaustion, or invalid payload schemas. Check status.ourplatform.com for service health. Instruct customer to check their payload headers (Content-Type: application/json, valid Bearer token) and provide Request ID (x-request-id header) for log tracing.",
+    "resolution_template": "Hello {customer_name},\n\nThank you for alerting us. Our engineering team investigated the 500 error you experienced with Request ID {request_id}. {root_cause_explanation}.\n\nA fix has been deployed to production. Could you please re-test the endpoint and verify if the issue is resolved? We apologize for the inconvenience and are actively monitoring our services."
+  },
+  {
+    "id": "KB-202",
+    "title": "API Rate Limiting (429 Too Many Requests)",
+    "category": "Technical Support",
+    "keywords": ["429", "rate limit", "too many requests", "throttle", "api limits", "burst limit", "header"],
+    "content": "Tier limits: Free (60 req/min), Starter (300 req/min), Pro (1,200 req/min), Enterprise (custom/unlimited). When rate limited, API returns HTTP 429 with 'Retry-After' header indicating wait time in seconds. Recommend implementing exponential backoff with jitter and caching idempotent GET responses.",
+    "resolution_template": "Hello {customer_name},\n\nYou are encountering HTTP 429 errors because your application has exceeded the {rate_limit} requests/minute limit for your {tier} plan.\n\nTo resolve this immediately:\n1. Inspect the `Retry-After` header in API responses to pause requests.\n2. Implement exponential backoff in your retry logic.\n3. If your workload requires higher throughput, our team can upgrade your rate limit tier upon request."
+  },
+  {
+    "id": "KB-203",
+    "title": "Webhook Delivery Failures & SSL Verification",
+    "category": "Technical Support",
+    "keywords": ["webhook failing", "webhook timeout", "signature verification", "ssl handshake", "webhook retries", "payload missed"],
+    "content": "Webhooks require an endpoint returning HTTP 200 within 5 seconds. If endpoint fails or times out, our retry schedule executes at 1m, 5m, 30m, 2h, and 24h. Common failure causes: SSL certificate expiration, firewall blocking cloud IPs, or HMAC SHA-256 signature verification mismatches.",
+    "resolution_template": "Hello {customer_name},\n\nWe checked the webhook delivery logs for endpoint {webhook_url}. The deliveries failed with status {error_code} because the endpoint took longer than 5 seconds to respond or failed SSL validation.\n\nPlease verify that your server returns an immediate 200 OK before processing background jobs, and verify your webhook secret key in Settings > Webhooks."
+  },
+  {
+    "id": "KB-204",
+    "title": "SSO (SAML 2.0 / Okta / Azure AD) Integration Guide",
+    "category": "Technical Support",
+    "keywords": ["sso", "saml", "okta", "azure ad", "single sign-on", "idp metadata", "acs url", "entity id"],
+    "content": "SAML 2.0 Single Sign-On is available on Pro and Enterprise tiers. Common issues: incorrect Entity ID, expired X.509 certificate, or NameID attribute mismatch (must map to email address). Ensure Assertion Consumer Service (ACS) URL is configured as https://app.ourplatform.com/sso/saml/consume.",
+    "resolution_template": "Hello {customer_name},\n\nTo complete your SAML SSO setup with {idp_name}, please verify the following settings:\n1. ACS URL: https://app.ourplatform.com/sso/saml/consume\n2. Entity ID: urn:ourplatform:auth:{workspace_id}\n3. NameID Format: EmailAddress\n\nI have verified your workspace configuration on our end and refreshed the SSO certificate binding. Please try logging in via your IdP portal again."
+  },
+  {
+    "id": "KB-301",
+    "title": "Two-Factor Authentication (2FA) Lockout & Recovery",
+    "category": "Account Access",
+    "keywords": ["2fa lost", "authenticator reset", "locked out", "recovery code", "lost phone", "mfa reset", "login issue"],
+    "content": "Account security policy for 2FA recovery: If a user loses their authenticator app and backup recovery codes, identity verification is required. For Enterprise users, Org Admin can reset 2FA in User Management. For Individual users, verify identity via email confirmation token + recent invoice verification before initiating manual 2FA reset.",
+    "resolution_template": "Hello {customer_name},\n\nI understand you are locked out due to losing access to your 2FA authenticator device. For your security, we require identity verification before resetting MFA.\n\nI have triggered a secure verification link to your registered email address ({email}). Once you complete the verification and confirm the last 4 digits of your payment card on file, our security team will reset your 2FA within 2 business hours."
+  },
+  {
+    "id": "KB-302",
+    "title": "Account Role Permissions & Team Invitations",
+    "category": "Account Access",
+    "keywords": ["invite team member", "permissions", "admin role", "invite not received", "spam filter", "user seat"],
+    "content": "Roles include Owner, Admin, Member, and Viewer. If team invitation emails are not received: 1) Check spam/junk folders for invites@ourplatform.com, 2) Whitelist domain, 3) Org Admin can copy the direct invitation link from Settings > Team Members.",
+    "resolution_template": "Hello {customer_name},\n\nIf your team member has not received their invitation email, it may have been caught in their corporate spam filter. \n\nAs an Admin, you can copy the direct invite link from Settings > Team Members > Pending Invites and send it to them directly. Alternatively, ensure your IT team whitelists invites@ourplatform.com."
+  },
+  {
+    "id": "KB-401",
+    "title": "Feature Request Intake & Roadmap Process",
+    "category": "Feature Request",
+    "keywords": ["feature request", "new feature", "enhancement", "roadmap", "suggestion", "custom integration", "dark mode", "export feature"],
+    "content": "All customer feature requests are logged into Productboard / Jira and reviewed by the Product Management team during bi-weekly sprint planning. Acknowledge user's use-case, log the request with customer tier weighting, and invite them to our public roadmap / beta program if applicable.",
+    "resolution_template": "Hello {customer_name},\n\nThank you for sharing this insightful feedback! I have logged your request for '{feature_name}' directly with our Product and Engineering teams (Internal Ref: FR-{ref_num}).\n\nOur team reviews customer requests regularly to prioritize our development roadmap. You can also view upcoming releases and vote on roadmap items at https://roadmap.ourplatform.com.\n\nWe greatly appreciate your input in making our product better!"
+  },
+  {
+    "id": "KB-501",
+    "title": "Handling Service Outages & Escalated Complaints",
+    "category": "Complaint",
+    "keywords": ["unacceptable", "outage compensation", "sla breach", "poor service", "escalate manager", "frustrated", "bad experience"],
+    "content": "When dealing with angry customers or SLA breach complaints: 1) Empathize sincerely and validate frustration without placing blame, 2) Provide clear status and corrective actions taken, 3) Offer appropriate service credits based on SLA agreement (Enterprise: 99.9% uptime credit), 4) Escalate to Customer Success Manager (CSM) or Tier 3 Support lead.",
+    "resolution_template": "Hello {customer_name},\n\nI sincerely apologize for the frustration and disruption this service issue caused to your operations. We hold our platform to high reliability standards, and we clearly fell short in this instance.\n\nOur engineering team has resolved the underlying issue, and we have published a complete Root Cause Analysis (RCA) on our status page. In accordance with our SLA commitment, I have applied a credit to your next billing cycle, and I have looped in your dedicated Customer Success Manager to schedule a follow-up call."
+  },
+  {
+    "id": "KB-502",
+    "title": "Data Export & GDPR / Privacy Inquiries",
+    "category": "Technical Support",
+    "keywords": ["export data", "csv export", "gdpr", "data deletion", "privacy", "backup data", "right to be forgotten"],
+    "content": "Users can export all analytics and customer data in CSV or JSON format via Settings > Workspace > Data Export. For GDPR 'Right to be Forgotten' or full account deletion requests, request must be confirmed by Account Owner and processed within 30 days pursuant to GDPR Article 17.",
+    "resolution_template": "Hello {customer_name},\n\nYou can perform a full workspace data export anytime by navigating to Settings > Workspace > Data Export, where you can download your records in CSV or JSON format.\n\nIf you are requesting complete GDPR account and data erasure, please confirm this request by replying to this ticket, and our compliance team will initiate the permanent deletion workflow."
+  }
+]
